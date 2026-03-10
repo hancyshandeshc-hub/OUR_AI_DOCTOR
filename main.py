@@ -41,5 +41,6 @@ prompt=chatTemplate.invoke(
 )
 result=model.invoke(prompt)
 button=st.button("Result")
-if button or prompt:
-    st.write(result.content)
+if prompt:
+   st.write(result.content)
+

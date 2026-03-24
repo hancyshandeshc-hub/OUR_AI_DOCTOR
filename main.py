@@ -1,45 +1,50 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
-
-from langchain_core.messages import SystemMessage,HumanMessage,AIMessage
 from langchain_core.prompts import ChatPromptTemplate
 import streamlit as st
 from dotenv import load_dotenv
-load_dotenv()
 import os
+
+# Load env variables
+load_dotenv()
+
+# Set API key
 os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
-llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.7)
+
+# Initialize model
+llm = ChatGoogleGenerativeAI(
+    model="gemini-2.0-flash",
+    temperature=0.7
+)
+
+# Prompt template
 chatTemplate = ChatPromptTemplate.from_messages([
     ("system",
-     """ROLE: You are a world-class Medical Doctor and Health Educator. Your mission is to provide empathetic, evidence-based, and clear medical guidance to your patients.
+     """ROLE: You are a world-class Medical Doctor and Health Educator.
 
-STYLE & TONE: 
-- Professional yet warm and supportive.
-- Use the 'ELI5' (Explain Like I'm 5) principle for complex medical terms.
-- Provide structured answers using bullet points for readability.
-- Always include 'When', 'How', and 'Why' in your explanations.
+STYLE:
+- Simple (ELI5)
+- Bullet points
+- Include When, How, Why
 
-CONTENT REQUIREMENTS:
-- Provide real-world scenarios and actionable health advice.
-- Cite common medical standards or general health guidelines where applicable.
-- Always include a disclaimer: 'I am an AI, not a substitute for professional medical advice. Please consult a doctor in person for emergencies.'
-
-STRICT SCOPE GUARDRAILS:
-- SUBJECT LOCK: You only answer questions related to human health, medicine, biology, wellness, and nutrition.
-- OFF-TOPIC REFUSAL: If a user asks about Web Development, coding, or any non-health topic, respond with: 'I am your specialized Health Mentor. Please ask a health-related question, or I can help you understand how stress from desk jobs affects your physical wellbeing.'
-- Do not provide specific prescriptions or dosages; focus on general education and over-the-counter safety."""
-    ),
+RULES:
+- Only health-related questions
+- Refuse non-health questions
+- Add disclaimer always
+"""),
     ("human", "{question}")
 ])
-model=ChatHuggingFace(llm=llm)
 
+# Create chain
+chain = chatTemplate | llm
+
+# Streamlit UI
 st.title("OUR AI DOCTOR")
-question=st.text_input("Ask Your Queries")
-prompt=chatTemplate.invoke(
-    {"question":question}
-)
-result=model.invoke(prompt)
-button=st.button("Result")
-if button:
-   st.write(result.content)
 
+question = st.text_input("Ask Your Queries")
 
+if st.button("Get Answer"):
+    if question.strip() == "":
+        st.warning("Please enter a question.")
+    else:
+        result = chain.invoke({"question": question})
+        st.write(result.content)

@@ -10,7 +10,7 @@ os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 
 # Model
 model = ChatGoogleGenerativeAI(
-    model="gemini-2.0-flash",
+    model="gemini-3-flash-preview",
     temperature=0.7
 )
 

@@ -39,4 +39,4 @@ if st.button("Get Answer"):
         with st.spinner("Consulting AI Doctor..."):
             prompt = chatTemplate.invoke({"question": question})
             result = model.invoke(prompt)
-            st.write(result.content)
+            st.write(result.content[0]["text"])

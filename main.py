@@ -1,15 +1,13 @@
-from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
+from langchain_google_genai import ChatGoogleGenerativeAI
+
 from langchain_core.messages import SystemMessage,HumanMessage,AIMessage
 from langchain_core.prompts import ChatPromptTemplate
 import streamlit as st
 from dotenv import load_dotenv
 load_dotenv()
 import os
-os.environ["HUGGINGFACEHUB_API_TOKEN"] = st.secrets["HUGGINGFACEHUB_API_TOKEN"]
-llm=HuggingFaceEndpoint(
-    repo_id="Qwen/Qwen2.5-Coder-32B-Instruct",
-    task="text-generation"
-)
+os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
+llm = ChatGoogleGenerativeAI(model="gemini-2.0-flash", temperature=0.7)
 chatTemplate = ChatPromptTemplate.from_messages([
     ("system",
      """ROLE: You are a world-class Medical Doctor and Health Educator. Your mission is to provide empathetic, evidence-based, and clear medical guidance to your patients.
